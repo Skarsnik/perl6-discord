@@ -28,4 +28,3 @@ class Discord::TextChannel is Discord::Channel is export {
 class Discord::VoiceChannel is Discord::Channel is export {
 }
 
-

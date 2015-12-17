@@ -1,5 +1,3 @@
-use Discord::Guild;
-use Discord::Channel;
 use JSON::Name;
 
 class Discord::User is export is rw {
@@ -9,10 +7,11 @@ class Discord::User is export is rw {
     has			$.email;
     has	Bool		$.verified;
     
-    has	Discord::Guild		@.guilds;
-    has Discord::Guild		%.hguilds;
-    has Discord::TextChannel	@.text-channels;
-    has Discord::VoiceChannel	@.voice-channels;
+    has			@.guilds;
+    has 		%.hguilds;
+    has 	        @.text-channels;
+    has                 %.private-channels;
+    has 	        @.voice-channels;
     
     method	AT-KEY ($key) {
       my $self = self;

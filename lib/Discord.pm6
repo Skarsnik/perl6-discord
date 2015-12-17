@@ -6,6 +6,7 @@ use Discord::Api_ref;
 use Discord::Channel;
 use Discord::User;
 use Discord::Guild;
+use Discord::Message;
 
 module Discord {
 
@@ -50,7 +51,7 @@ class Discord::Client is export {
       my $rep = self.post(%api-url<login>, email => $mail, password => $password);
       my %d = from-json($rep.content);
       $!auth-token = %d<token>;
-      #$!me = Discord::User.new(:id('@me'));
+      $!me = Discord::User.new(:id('@me'));
       self.info-user($!me);
       return True,
     }
@@ -67,16 +68,19 @@ class Discord::Client is export {
       my @g = from-json($rep.content);
       say @g.elems;
       for @g[0][0] -> %g {
-	my $gd = unmarchshal(to-json(%g), Discord::Guild);
+        say to-json(%g);
+	my $gd = unmarshal(to-json(%g), Discord::Guild);
 	$user.hguilds{%g<name>} = $gd;
 	$user.guilds.push($gd);
 	self.guild-channels($gd);
       }
       $rep = self.get(sprintf(%api-url<user-channels>, $user.id));
       my $pcdata = from-json($rep.content);
+      $user.text-channels = ();
       for @($pcdata) -> %pc {
-        my $chan = Discord::TextChannel.new(:id(%pc<id>), :private(True));
+        my $chan = unmarshal(to-json(%pc), Discord::TextChannel);
         $user.text-channels.push($chan);
+        $user.private-channels{$chan.recipient.name} = $chan;
       }
     }
     
@@ -109,8 +113,13 @@ class Discord::Client is export {
       }
     }
     
-    method get-messages(Discord::TextChannel $channel) {
-      my $rep = self.get(sprintf(%api-url<channel-messages>, $channel.id));
+    method get-messages(Discord::TextChannel $channel, :$after, :$before, :$limit) {
+      my $url = sprintf(%api-url<channel-messages>, $channel.id);
+      $url ~= '?' if $after or $before or $limit;
+      $url ~= "&after="~$after if $after;
+      $url ~= "&before="~$before if $before;
+      $url ~= "&limit="~$limit if $limit;
+      my $rep = self.get($url);
       my @messages;
       my $data = from-json($rep.content);
       for @($data) -> %message {
