@@ -1,7 +1,7 @@
 {
   "name" : "Discord",
   "tags" : [ "Webservice" ],
-  "author" : "Sylvain Colinet <scolinet@gmail.com",
+  "author" : "Sylvain Colinet <scolinet@gmail.com>",
   "support" : {
     "source" : "git://github.com/Skarsnik/perl6-discord.git"
   },
