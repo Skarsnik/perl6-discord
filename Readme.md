@@ -1,3 +1,7 @@
+## Obsolete
+
+THIS MODULE IS OBSOLETE use https://github.com/shuppet/p6-api-discord instead
+
 ## Name Discord
 
 Discord is an application that provide text and voice channel. see https://discordapp.com/
